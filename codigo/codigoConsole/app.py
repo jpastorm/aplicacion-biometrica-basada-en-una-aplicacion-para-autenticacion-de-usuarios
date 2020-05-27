@@ -1,4 +1,3 @@
-from flask import Flask,render_template,request
 import cv2
 import os
 import sys
@@ -6,30 +5,8 @@ import numpy
 import matplotlib.pyplot as plt
 from enhance import image_enhance
 from skimage.morphology import skeletonize, thin
-from werkzeug.utils import secure_filename
-import shutil
 
-
-app = Flask(__name__)
-
-#configura ruta de descargas
-
-app.config['UPLOAD_FOLDER']="muestra/"
-
-@app.route('/')
-def index():
-	return render_template('index.html')
-
-@app.route('/subir',methods=['GET','POST'])
-def subir():
-	if request.method=="POST":
-		f=request.files["nombreArchivo"]
-		filename=f.filename
-		f.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
-		while True:
-			procesar(filename)
-			pass
-		
+#os.chdir("/app/")
 
 def removedot(invertThin):
     temp0 = numpy.array(invertThin[:])
@@ -92,27 +69,29 @@ def get_descriptors(img):
 	_, des = orb.compute(img, keypoints)
 	return (keypoints, des);
 
-def procesar(imagen):
-	img=imagen
+def procesar():
 	i=1
 	if i==1:
-		image_name="101_2.tif"
+		image_name="guido alvites pinto 1.bmp"
 		i=i+1
-		main(img,image_name)
+		main(image_name)
 		pass 
 	if i==2:
-		image_name="3.tiff"
+		image_name="guillermo medina zegarra 1.bmp"
 		i=i+1
-		main(img,image_name)
+		main(image_name)
 		pass
-def main(imagen,image_namedos):
-	print(imagen)
-	image_name = imagen
-	img1 = cv2.imread("muestra/" + image_name, cv2.IMREAD_GRAYSCALE)
+	if i==3:
+		image_name="gonzalo salazar revilla 1.bmp"
+		i=i+1
+		main(image_name)
+		pass
+def main(image_namedos):
+	image_name = "guillermo medina zegarra 1.bmp"
+	img1 = cv2.imread("database/" + image_name, cv2.IMREAD_GRAYSCALE)
 	kp1, des1 = get_descriptors(img1)
 
 	#image_name = "102_1.tif"
-	print(image_namedos)
 	img2 = cv2.imread("database/" + image_namedos, cv2.IMREAD_GRAYSCALE)
 	kp2, des2 = get_descriptors(img2)
 
@@ -120,22 +99,25 @@ def main(imagen,image_namedos):
 	bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
 	matches = sorted(bf.match(des1, des2), key= lambda match:match.distance)
 	# Plot keypoints
-	#img4 = cv2.drawKeypoints(img1, kp1, outImage=None)
-	#img5 = cv2.drawKeypoints(img2, kp2, outImage=None)
-	#f, axarr = plt.subplots(1,2)
-	#axarr[0].imshow(img4)
-	#axarr[1].imshow(img5)
-	#plt.show()
+	img4 = cv2.drawKeypoints(img1, kp1, outImage=None)
+	img5 = cv2.drawKeypoints(img2, kp2, outImage=None)
+	f, axarr = plt.subplots(1,2)
+	axarr[0].imshow(img4)
+	axarr[1].imshow(img5)
+	plt.show()
 	# Plot matches
-	#img3 = cv2.drawMatches(img1, kp1, img2, kp2, matches, flags=2, outImg=None)
-	#plt.imshow(img3)
-	#plt.show()
+	img3 = cv2.drawMatches(img1, kp1, img2, kp2, matches, flags=2, outImg=None)
+	plt.imshow(img3)
+	plt.show()
 
 	# Calculate score
 	score = 0;
 	for match in matches:
 		score += match.distance
 	score_threshold = 1
+	print(score)
+	print(len(matches))
+	print(score/len(matches))
 	if score/len(matches) < score_threshold:
 		print("Fingerprint matches.")
 	else:
@@ -143,5 +125,8 @@ def main(imagen,image_namedos):
 
 
 
-if __name__=='__main__':
-	app.run(port=3000,debug=True)
+if __name__ == "__main__":
+	try:
+		procesar()
+	except:
+		raise
