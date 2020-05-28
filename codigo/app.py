@@ -26,9 +26,9 @@ def subir():
 		f=request.files["nombreArchivo"]
 		filename=f.filename
 		f.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
-		while True:
-			procesar(filename)
-			pass
+		procesar(filename)
+		pass
+	return "algo"
 		
 
 def removedot(invertThin):
@@ -93,26 +93,28 @@ def get_descriptors(img):
 	return (keypoints, des);
 
 def procesar(imagen):
-	img=imagen
-	i=1
-	if i==1:
-		image_name="101_2.tif"
-		i=i+1
-		main(img,image_name)
-		pass 
-	if i==2:
-		image_name="3.tiff"
-		i=i+1
-		main(img,image_name)
-		pass
+	for indice in range(1):
+		img=imagen
+		if indice==0:
+			image_name="abraham caba vargas 1.bmp"
+			indice=indice+1
+			main(img,image_name)
+			pass 
+		if indice==1:
+			image_name="ada vera quispe 1.bmp"
+			indice=indice+1
+			main(img,image_name)
+			pass
+
 def main(imagen,image_namedos):
 	print(imagen)
+	print(image_namedos)
 	image_name = imagen
 	img1 = cv2.imread("muestra/" + image_name, cv2.IMREAD_GRAYSCALE)
 	kp1, des1 = get_descriptors(img1)
 
 	#image_name = "102_1.tif"
-	print(image_namedos)
+	#print(image_namedos)
 	img2 = cv2.imread("database/" + image_namedos, cv2.IMREAD_GRAYSCALE)
 	kp2, des2 = get_descriptors(img2)
 
