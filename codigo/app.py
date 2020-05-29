@@ -1,4 +1,4 @@
-from flask import Flask,render_template,request
+from flask import Flask,render_template,jsonify,request
 import cv2
 import os
 import sys
@@ -6,12 +6,10 @@ import numpy
 import matplotlib.pyplot as plt
 from enhance import image_enhance
 from skimage.morphology import skeletonize, thin
-from werkzeug.utils import secure_filename
-import shutil
 
 
 app = Flask(__name__)
-
+app.secret_key="MY_SECRET_KEY"
 #configura ruta de descargas
 
 app.config['UPLOAD_FOLDER']="muestra/"
@@ -20,15 +18,15 @@ app.config['UPLOAD_FOLDER']="muestra/"
 def index():
 	return render_template('index.html')
 
-@app.route('/subir',methods=['GET','POST'])
+@app.route('/api/v1/subir',methods=['GET','POST'])
 def subir():
 	if request.method=="POST":
-		f=request.files["nombreArchivo"]
+		f=request.files["myfile"]
 		filename=f.filename
 		f.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
-		procesar(filename)
-		pass
-	return "algo"
+		#procesar(filename)
+		data={"nombre":filename}
+	return jsonify(data)
 		
 
 def removedot(invertThin):
@@ -92,20 +90,18 @@ def get_descriptors(img):
 	_, des = orb.compute(img, keypoints)
 	return (keypoints, des);
 
-def procesar(imagen):
-	for indice in range(1):
-		img=imagen
-		if indice==0:
-			image_name="abraham caba vargas 1.bmp"
-			indice=indice+1
-			main(img,image_name)
-			pass 
-		if indice==1:
-			image_name="ada vera quispe 1.bmp"
-			indice=indice+1
-			main(img,image_name)
-			pass
+@app.route('/api/v1/procesar',methods=['GET','POST'])
+def procesar():
+	if request.method=="POST":
+		imagen= request.get_json()
+		print(imagen)
+		img=imagen['name']
+		print(img)
+		return jsonify({'res':imagen})
+	return jsonify({'res':"NO HAY"})
 
+
+@app.route('/api/v1/main',methods=['GET','POST'])
 def main(imagen,image_namedos):
 	print(imagen)
 	print(image_namedos)
@@ -140,8 +136,12 @@ def main(imagen,image_namedos):
 	score_threshold = 1
 	if score/len(matches) < score_threshold:
 		print("Fingerprint matches.")
+		data={"result":"FINGERPRINT MATCHES"}
+		return jsonify(data)
 	else:
 		print("Fingerprint does not match.")
+		data={"result":"Fingerprint does not match."}
+		return jsonify(data)
 
 
 
