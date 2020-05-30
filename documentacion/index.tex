@@ -42,9 +42,29 @@
 \section{Desarrollo} 
 La biometría es una tecnología que puede identificar a una persona en función de sus características físicas. La identificación y el reconocimiento de huellas digitales es un método biométrico que se usa ampliamente en varios tipos de aplicaciones debido a su precisión y confiabilidad. El objetivo principal de este proyecto es analisar un sistema que pueda reconocer si 2 impresiones provienen de la misma persona o no. Con este fin, las imágenes se recopilan primero de un conjunto de datos. Luego, sobre las mismas imágenes, se aplican técnicas de procesamiento de imágenes digitales para mejorar su calidad. Una vez que la imagen se se limpie se encuentra los puntos críticos que luego se comparan según su distancia de Hamming.
 
-\subsection{AAAA} 
-	\subsubsection{AAAA} 
+\subsection{¿ Como se realizo ?} 
+	\subsubsection{Limpiamos la imagen del ruido} Para la limpiaza de la imagen y las crestas de la huella se usa una libreria llamada enhance la cual segun su documentacion "Utiliza un banco de filtros gabor orientado para mejorar la imagen de la huella digital. La orientación de los filtros gabor se decide por la orientación de las crestas en la imagen de entrada." todo ello para mejorar una imagen de huella digital. \\
+En terminos faciles de entender usa la frecuencia en puntos especificos, en regiones localizadas alrededor del punto o region de analisis para poder eliminar la menor frecuencia y dejar la mayor freceuncia encontrada en la imagen, en donde la menor frecuencia es denominada ruido. \\
 
+{\includegraphics[width=0.5\textwidth]{./IMAGENES/ruido}\par}
+
+	\subsubsection{Escogemos el mejor umbral con otsu} 
+El umbral de Otsu seleccionará automáticamente el mejor umbral genérico para la imagen para obtener un buen contraste entre la información de primer plano y de fondo. \\
+
+{\includegraphics[width=0.4\textwidth]{./IMAGENES/otsu}\par}
+
+	\subsubsection{Esquetelizamos la huella} 
+Para mejorar el proceso de búsqueda de puntos críticos en la huella digital, es bueno esqueletizar la imagen en sí. Esto crea puntos críticos más únicos y más fuertes.\\
+
+{\includegraphics[width=0.4\textwidth]{./IMAGENES/esqueleto}\par}
+
+	\subsubsection{Detectar puntos criticos}
+Una vez que se obtiene la imagen esquelética, el siguiente paso sería encontrar puntos para cruzar las crestas de la impresión, que luego se llaman puntos minuciosos. Esto se puede hacer con la ayuda de un detector de punto crítico, que requiere un cambio importante en el contraste local. Tal es el detector Harris Corner. Debido a que el detector Harris Corner es capaz de detectar ángulos y bordes fuertes, esto es ideal para el problema de la huella digital, donde los mínimos más importantes son bordes cortos y bifurcaciones, en donde las posiciones donde se juntan los bordes.  \\
+
+{\includegraphics[width=0.4\textwidth]{./IMAGENES/harris}\par}
+
+	\subsubsection{Unir los puntos y calcular igualdades}
+Después de obtener la matriz de descriptores para dos impresiones, se necesita un algoritmo para compararlas. La forma que se usa es la distancia de Hamming entre los descriptores de 2 puntos diferentes. De esta manera obtendremos una puntuación que indica qué tan similares son esas 2 impresiones. Establecer un umbral puede determinar si las impresiones son iguales o no.
 
 %% ----------------------------------------------------------------------------------------------------------------------------------
 
