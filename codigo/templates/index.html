@@ -9,39 +9,148 @@
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+	<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@700&display=swap" rel="stylesheet">
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+
 </head>
 <body>
+	<style type="text/css">
+		input[type="file"] {
+			position: absolute;
+			left: 0;
+			opacity: 0;
+			top: 0;
+			bottom: 0;
+			width: 100%;
+		}
+
+		#divv {
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			width: 100%;
+			margin:0;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background: #0F2027;  /* fallback for old browsers */
+			background: -webkit-linear-gradient(to right, #2C5364, #203A43, #0F2027);  /* Chrome 10-25, Safari 5.1-6 */
+			background: linear-gradient(to right, #2C5364, #203A43, #0F2027); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+			border: 3px dotted #bebebe;
+			border-radius: 10px;
+		}
+
+		label {
+			display: inline-block;
+			position: relative;
+			height: 100px;
+			width: 400px;
+			color:white;
+			font-family: 'Noto Serif', serif;
+		}
+
+		div.dragover {
+			background-color: #aaa;
+		}
+		#nombreMuestra{
+			font-size: 30px;
+		}
+
+	</style>
 	<!-- Image and text -->
+	{% raw %}
 	<div class="container" id="app">	
 		<nav class="navbar navbar-dark bg-dark">
 			<a class="navbar-brand" href="#">
 				<img src="/docs/4.5/assets/brand/bootstrap-solid.svg" width="30" height="30" class="d-inline-block align-top" alt="" loading="lazy">
-				HUELLITAS
+				HUELLITAS---- JOSE PASTOR---- FRANKLIN HUICHI
 			</a>
 		</nav>
-		<input type="file" accept=".bmp" @change="onFileSelected" name="myfile">
+		<br>
+		<br>
+		<label for="test">
+			<div id="divv">CLICK OR DRAG YOUR IMAGE</div>
+			<input type="file" accept=".bmp" @change="onFileSelected" name="myfile" id="test">
+		</label>
+		<p id="filename"></p>
+		<br><br><br><br>
+		<p id="nombreMuestra">Muestra: {{ nombre }}</p>
+		<br><br><br><br>
+		<table class="table">
+			<thead class="thead-dark">
+				<tr>
+					<th scope="col">#</th>
+					<th scope="col">Database</th>
+					<th scope="col">Muestra</th>
+					<th scope="col">Mensaje</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr v-for="(mensaje,indice) in mensajes">
+					<td> {{ indice+1 }}</td>
+					<td> {{ mensaje.Nombre }} </td>
+					<td> {{ mensaje.usuario }} </td>
+					<td> {{ mensaje.resultado }} </td>
+				</tr>
+			</tbody>
+		</table>
+
 	</div>
+	{% endraw %}
 	<!-- Optional JavaScript -->
 	<!-- jQuery first, then Popper.js, then Bootstrap JS -->
 	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+	<script type="text/javascript">
+		var fileInput = document.querySelector('input[type=file]');
+		var filenameContainer = document.querySelector('#filename');
+		var dropzone = document.querySelector('div');
 
+		fileInput.addEventListener('change', function() {
+			filenameContainer.innerText = fileInput.value.split('\\').pop();
+		});
+
+		fileInput.addEventListener('dragenter', function() {
+			dropzone.classList.add('dragover');
+		});
+
+		fileInput.addEventListener('dragleave', function() {
+			dropzone.classList.remove('dragover');
+		});
+	</script>
 	<script type="text/javascript">
 		var app= new Vue({
 			el: "#app",
 			data:{
-				mensajes:[],
+				mensajes:[] , 
 				nombre:""
 			},
 			methods:{
-				foo:function(){
-
+				match:function(){
+					Swal.fire('MATCH ENCONTRADO')
 				},
 				procesar:function(nombre){
-					axios.post('/api/v1/procesar', {name:nombre }).then(function(response) {
+					var nombres=[];
+					var comparacion=[];
+					axios.post('/api/v1/procesar', {name:nombre }).then(response=> {
 						console.log(response.data);
+						this.mensajes=response.data['resultados'];
+						for (var i = 0; i < this.mensajes.length; i++) {
+							if (this.mensajes[i].estado==1) {
+								this.match();
+							}
+						}
+
 					});
+
+					
+
+				},
+				foo:function(){
+					console.log(this.nombres)
+					console.log(this.comparacion)
 				},
 				onFileSelected (event) {
 					const file = event.target.files[0];

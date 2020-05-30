@@ -7,6 +7,9 @@ import matplotlib.pyplot as plt
 from enhance import image_enhance
 from skimage.morphology import skeletonize, thin
 
+rootDir = os.getcwd() + '\database'
+data = {}
+data['resultados'] = []
 
 app = Flask(__name__)
 app.secret_key="MY_SECRET_KEY"
@@ -94,55 +97,40 @@ def get_descriptors(img):
 def procesar():
 	if request.method=="POST":
 		imagen= request.get_json()
-		print(imagen)
 		img=imagen['name']
-		print(img)
-		return jsonify({'res':imagen})
-	return jsonify({'res':"NO HAY"})
+
+		for dirName, subdirList, fileList in os.walk(rootDir):
+			for index in range(2):
+				print('\t%s' % fileList[index])
+				image_name = img
+				image_namedos=fileList[index]
+				img1 = cv2.imread("muestra/" + image_name, cv2.IMREAD_GRAYSCALE)
+				kp1, des1 = get_descriptors(img1)
+				#print(image_namedos)
+				img2 = cv2.imread("database/" + image_namedos, cv2.IMREAD_GRAYSCALE)
+				kp2, des2 = get_descriptors(img2)
+				# Matching between descriptors
+				bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
+				matches = sorted(bf.match(des1, des2), key= lambda match:match.distance)
+				# Calculate score
+				score = 0;
+				for match in matches:
+					score += match.distance
+				score_threshold = 1
+				if score/len(matches) < score_threshold:
+					print("Fingerprint matches.")
+					data['resultados'].append({'Nombre':image_namedos,"usuario":image_name,'resultado':'Las huellas coinciden',"estado":1})
+					return jsonify(data)
+				else:
+					print("Fingerprint does not match.")
+					data['resultados'].append({'Nombre':image_namedos,"usuario":image_name,'resultado':'Las huellas no coinciden',"estado":0})
+
+	return jsonify(data)
 
 
-@app.route('/api/v1/main',methods=['GET','POST'])
-def main(imagen,image_namedos):
-	print(imagen)
-	print(image_namedos)
-	image_name = imagen
-	img1 = cv2.imread("muestra/" + image_name, cv2.IMREAD_GRAYSCALE)
-	kp1, des1 = get_descriptors(img1)
-
-	#image_name = "102_1.tif"
-	#print(image_namedos)
-	img2 = cv2.imread("database/" + image_namedos, cv2.IMREAD_GRAYSCALE)
-	kp2, des2 = get_descriptors(img2)
-
-	# Matching between descriptors
-	bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
-	matches = sorted(bf.match(des1, des2), key= lambda match:match.distance)
-	# Plot keypoints
-	#img4 = cv2.drawKeypoints(img1, kp1, outImage=None)
-	#img5 = cv2.drawKeypoints(img2, kp2, outImage=None)
-	#f, axarr = plt.subplots(1,2)
-	#axarr[0].imshow(img4)
-	#axarr[1].imshow(img5)
-	#plt.show()
-	# Plot matches
-	#img3 = cv2.drawMatches(img1, kp1, img2, kp2, matches, flags=2, outImg=None)
-	#plt.imshow(img3)
-	#plt.show()
-
-	# Calculate score
-	score = 0;
-	for match in matches:
-		score += match.distance
-	score_threshold = 1
-	if score/len(matches) < score_threshold:
-		print("Fingerprint matches.")
-		data={"result":"FINGERPRINT MATCHES"}
-		return jsonify(data)
-	else:
-		print("Fingerprint does not match.")
-		data={"result":"Fingerprint does not match."}
-		return jsonify(data)
-
+@app.route('/api/v1/resultado',methods=['GET','POST'])
+def main():
+	return "algo"
 
 
 if __name__=='__main__':
