@@ -63,18 +63,27 @@ Una vez que se obtiene la imagen esquelética, el siguiente paso sería encontra
 
 {\includegraphics[width=0.4\textwidth]{./IMAGENES/harris}\par}
 
-	\subsubsection{Unir los puntos y calcular igualdades}
+\subsubsection{Unir los puntos y calcular igualdades}
 Después de obtener la matriz de descriptores para dos impresiones, se necesita un algoritmo para compararlas. La forma que se usa es la distancia de Hamming entre los descriptores de 2 puntos diferentes. De esta manera obtendremos una puntuación que indica qué tan similares son esas 2 impresiones. Establecer un umbral puede determinar si las impresiones son iguales o no.
-
+	\subsubsection{Pruebas de codigo}
+	
+{\includegraphics[width=0.4\textwidth]{./IMAGENES/removedot}\par}
+{\includegraphics[width=0.4\textwidth]{./IMAGENES/descriptor}\par}
+{\includegraphics[width=0.4\textwidth]{./IMAGENES/procesar}\par}
 %% ----------------------------------------------------------------------------------------------------------------------------------
 
 
 %% Resultados------------------------------------------------------------------------------------------------------------
 
 \section{Resultados}
-
+	\subsection{Interfaz del sistema}
+	{\includegraphics[width=0.4\textwidth]{./IMAGENES/interfaz}\par}
+	\subsection{Base de datos de huellas dactilares .bmp}
+	{\includegraphics[width=0.4\textwidth]{./IMAGENES/huellas}\par}
+	\subsection{Alerta cuando el sistema encuentra una igualdad}
+	{\includegraphics[width=0.4\textwidth]{./IMAGENES/match}\par}
 %%Ejemplo de cita
-\cite{Gartner} 
+
 
 
 %% ----------------------------------------------------------------------------------------------------------------------------------
@@ -87,22 +96,21 @@ Después de obtener la matriz de descriptores para dos impresiones, se necesita 
 \begin{itemize}
 
 \item Conclusion 1 : \\
-
+En conclusion aprendimos a usar la tecnlogia OpenCV y Python en el rubro de la biometrica alcanzado el objetivo de encontrar huellas en el banco de imagenes usadas como muestras.
 \item Conclusion 2 : \\ 
-
+Con este proyecto, se desarrolló un sistema de reconocimiento de huellas digitales basado en el método de búsqueda de puntos críticos. Estos puntos se utilizan para encontrar descriptores formales de la región que los rodea, formando una matriz que identifica la huella en sí. Probé el sistema en el conjunto de datos FCV2002 DB1 para determinar si estaba reconociendo correctamente las impresiones.
 \item Conclusion 3 : \\ 
-
-\item Conclusion 4 : \\ 
+Durante el desarrollo del sistema aprendimos y comprendimos mejor la biometria dactilar, ademas de integrar tecnologias backend (python) y de frontend(vuejs) para lograr un mejor funcionamiento. 
 \end{itemize}
-
+%%\cite{Gartner} 
 %% ----------------------------------------------------------------------------------------------------------------------------------
 \end{multicols}
 
 %%  REFERENCIAS BIBLIOGRÁFICAS ------------------------------------------------------------------------------------------
 	
-	\newpage
+	%%\newpage
 	
-	\bibliographystyle{apalike} 	%ESTILO
-	\bibliography{BIBLIOGRAFIA}	 
+	%%\bibliographystyle{apalike} 	%ESTILO
+	%%\bibliography{BIBLIOGRAFIA}	 
 
 \end{document}
